@@ -2,6 +2,7 @@
 var express = require('express'),
   connect = require('connect'),
   ejs = require('ejs'),
+  engine = require('ejs-locals'),
   http = require('http'),
   mongoose = require('mongoose'),
   passport = require('passport'),
@@ -41,7 +42,7 @@ else if (process.argv[2] == "local") {
 console.log("h@bitat running at", SITE_URL, "\nconnected to db", MONGO_URI);
 
 // instantiate the app and connect to the database
-var app = module.exports = express.createServer(),
+var app = express(),
   db = mongoose.connect(MONGO_URI);
 
 /* START UTILITY FUNCTIONS */
@@ -89,6 +90,7 @@ function shuffle(arr) {
   return arr;
 }
 /* END UTILITY FUNCTIONS */
+app.engine('ejs', engine);
 
 // configure app and modules
 app.configure(function() {
@@ -287,7 +289,7 @@ app.get('/projects/:id', function(req, res) {
 		"hackid": req.params.id,
 	}, function(err, doc) {
 		var team = {};
-		
+
 		for (var i=0; i<doc.team.length; i++) {
 			if(doc.team[i]) {
 				team[doc.team[i]] = {
@@ -296,7 +298,7 @@ app.get('/projects/:id', function(req, res) {
 				};
 			}
 		}
-		
+
 		User.where('github.username').in(doc.team).exec(function(err, docs) {
 			for (var i=0; i<docs.length; i++) {
 				team[docs[i].github.username] = {
@@ -453,7 +455,7 @@ app.post('/projects/:id/comment', function(req,res) {
   console.log("WTF"+JSON.stringify(newComment));
   Hack.update({
     "hackid": req.params.id,
-  }, { $push: { comments: newComment } }, 
+  }, { $push: { comments: newComment } },
   function(err, doc, raw) {
     console.log("NOOO"+JSON.stringify(doc));
     console.log("RAW: " + raw);
