@@ -36,6 +36,10 @@ $(function() {
 	$(".link").click(function() {
 		transition((($(this).attr('class').split(' ').indexOf('external') > -1) ? '' : '/') + $(this).attr('name') + ($(this).attr('name')=="login" ? "?loc="+window.location : ""));
 	});
+
+        $("a").click(function() {
+          transition($(this).attr("href"));
+        });
 	
 	$(".form_input").focus(function() {
 		if (!$(this).attr('value')) {
