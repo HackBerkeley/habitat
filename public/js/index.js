@@ -48,14 +48,20 @@ $(function() {
 	});
         $("#nameField").keypress(function () {
           $("#nameSaveButton").show();
+          $("#nameEditIcon").hide();
         });
         $("#nameSaveButton").bind("click", function () {
           $.post("/users/me", {user: {name: $("#nameField").text()}});
+          $("#nameSaveButton").hide();
+          $("#nameEditIcon").show();
         });
         $("#blurb").keypress(function () {
           $("#saveButton").show();
+          $("#blurbEditIcon").hide();
         });
         $("#saveButton").bind("click", function () {
           $.post("/users/me", {user: {blurb: $("#blurb").text()}});
+          $("#saveButton").hide();
+          $("#blurbEditIcon").show();
         });
 });

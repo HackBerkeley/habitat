@@ -18,6 +18,9 @@
   <div class="grid column" id="links">
 
     <div class="square twocolumn2by1rect">
+      <%if (myself) { %>
+        <img id="nameEditIcon" src="/img/pencil.png"><img>
+      <% } %>
       <span id="nameSaveButton" style="z-index: 1000; display: none; font-size: 20px; line-height: 22px; font-weight: bold; text-transform: lowercase; margin-top: 90%; margin-left: 0px; color: white; background-color: rgba(0,148,0,0.75); opacity: 0.9; position: absolute; text-align: center; width: 100%;">Save</span>
       <div class="squaretext" style="font-size: 30px;"><div class="squaretitle" id="nameField" contentEditable="<%= myself %>">
       	<% if (viewing.info.name) { %> 
@@ -56,6 +59,9 @@
    
   <div class="grid column" id="links">
     <div class="square twocolumntwosquare">
+      <%if (myself) { %>
+        <img id="blurbEditIcon" src="/img/pencil.png">
+      <% } %>
       <span id="saveButton" style="z-index: 1000; display: none; font-size: 20px; line-height: 22px; font-weight: bold; text-transform: lowercase; margin-top: 90%; margin-left: 0px; color: white; background-color: rgba(0,148,0,0.75); opacity: 0.9; position: absolute; text-align: center; width: 100%;">Save</span>
       <div class="squaretext"><div class="squarebio" id="blurb" contentEditable="<%= myself %>">
         <%= viewing.info.blurb || quote %>
