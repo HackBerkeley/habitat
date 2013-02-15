@@ -26,6 +26,8 @@ function transition(dest) {
 var gridfade_t = 500,
 	pagefade_t = 100;
 
+var keypress = 0;     
+
 $(function() {
 	$("body").fadeIn(pagefade_t, function() {
 		$(".grid").each(function(i, e) {
@@ -55,7 +57,8 @@ $(function() {
           $("#nameSaveButton").hide();
           $("#nameEditIcon").show();
         });
-        $("#blurb").keypress(function () {
+  	$("#blurb").keypress(function () {
+	  keypress++;
           $("#saveButton").show();
           $("#blurbEditIcon").hide();
         });
@@ -63,5 +66,15 @@ $(function() {
           $.post("/users/me", {user: {blurb: $("#blurb").text()}});
           $("#saveButton").hide();
           $("#blurbEditIcon").show();
+          keypress = 0;
         });
+ 	$('#blurb').focus(function() {
+          $("#saveButton").show();
+          $("#blurbEditIcon").hide();
+    	}).add(saveButton).focusout(function() {
+        if (keypress == 0 && (!$(blurb).is(':focus'))) {
+          $("#saveButton").hide();
+          $("#blurbEditIcon").show();
+        }
+    });
 });
