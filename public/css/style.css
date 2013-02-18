@@ -25,8 +25,8 @@ body {
 	margin: 0px;
 	background-color: #fff;
 	display: none;
-  font-size: 18px;
-  line-height: 25px;
+	font-size: 18px;
+	line-height: 25px;
 	font-family: Anaheim;
 }
 
@@ -136,7 +136,7 @@ h1 {
 }
 
 .breaker {
-        clear: left;
+    clear: left;
 }
 
 .darkgreen {
@@ -294,14 +294,14 @@ h1 {
 
 .title-bar {
 	text-align: center;
-  background-color: green;
-  opacity: 0.7;
-  color: white;
-  width: 100%;
-  padding: 10px 0;
+	background-color: green;
+	opacity: 0.7;
+	color: white;
+	width: 100%;
+	padding: 10px 0;
 	position: relative;
 	overflow: auto;
-  clear: both;
+	clear: both;
 }
 
 .container {
@@ -417,6 +417,7 @@ input.submit {
 
 a {
 	color: white;
+	border-bottom:solid 1px transparent;
 }
 
 .row {
