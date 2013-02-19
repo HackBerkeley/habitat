@@ -86,10 +86,42 @@ h1 {
 }
 
 .wide_container {
-	width: 80%;
-	margin-left: 12.5%;
-	margin-right: auto;
+	margin: 0 auto;
+  padding-top : 20px;
+  width : 80%;
 }
+  .wide_container label {
+    display : block;
+  }
+  .wide_container > div {
+    width: 90%;
+    margin : 0 auto;
+  }
+
+  .form_input {
+    /* fix stupid box model so padding is inside */
+    -moz-box-sizing : border-box;
+    -ms-box-sizing : border-box;
+    -webkit-box-sizing : border-box;
+    box-sizing : border-box;
+
+    width : 100%;
+    display : block;
+    font-size: 16px;
+    padding: 5px 10px;
+    margin-bottom : 0.8em;
+    border : none;
+    outline : none;
+    background : #f0f0f0;
+    box-shadow : 0px 0px 2px 0px #aaa;
+
+    font-family: Anaheim;
+  }
+
+  .form_input_required {
+    background : #fff;
+  }
+
 
 .form_line, .viewline {
 	margin-left: auto;
@@ -104,17 +136,6 @@ h1 {
 .title {
 	font-family: 'Code-Pro-Demo';
   margin: 0;
-}
-
-.form_input {
-	line-height: 40px;
-	width: 90%;
-	font-size: 16px;
-	padding-left: 10px;
-}
-
-:required {
-	border: 1px solid red;
 }
 
 .square {
