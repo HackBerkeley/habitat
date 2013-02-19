@@ -11,14 +11,43 @@
         </div>
         <form name="input" action="/submit" method="post">
             <div class="wide_container">
-                <input class="form_input" type="text" name="title" placeholder="hack title" required>
-                <input class="form_input" type="text" name="team" data-default=<%= "'"+user.github.username+", '" %> placeholder = "team members (github or real name)" required>
-                <input class="form_input" type="text" name="source" placeholder="source URL">
-                <input class="form_input" type="text" name="demo" placeholder="demo URL">
-                <input class="form_input" type="text" name="picture" size="chars" placeholder="image URL">
-                <input class="form_input" type="text" name="video" placeholder="video URL">
-                <input class="form_input" type="text" name="tags" placeholder="tags (comma separated)">
-                <textarea class="form_input" placeholder="description" name="blurb" rows=7 col=100 style="line-height: 18px;" required></textarea>
+              <div>
+                <label for="title">Hack title:</label>
+                <input class="form_input form_input_required" type="text" name="title" placeholder="Facetwitter 2.0" />
+              </div>
+              <div>
+                <label for="team">Team</label>
+                <input class="form_input form_input_required" type="text" name="team" data-default=<%= "'"+user.github.username+", '" %> placeholder = "Alice, Bob">
+              </div>
+              <div>
+                <label for="source">Source</label>
+                <input class="form_input" type="text" name="source" placeholder="http://">
+              </div>
+
+              <div>
+                <label for="demo">Demo</label>
+                <input class="form_input" type="text" name="demo" placeholder="http://">
+              </div>
+
+              <div>
+                <label for="picture">Picture</label>
+                <input class="form_input" type="text" name="picture" size="chars" placeholder="http://">
+              </div>
+
+              <div>
+                <label for="video">Video</label>
+                <input class="form_input" type="text" name="video" placeholder="http://">
+              </div>
+
+              <div>
+                <label for="tags">Tags (comma separated)</label>
+                <input class="form_input" type="text" name="tags" placeholder="bigdata, html9, revolutionary, ...">
+              </div>
+
+              <div>
+                <label for="blurb">Description</label>
+                <textarea class="form_input form_input_required" placeholder="This is like, the next big thing man" name="blurb" rows=7 col=100 style="line-height: 18px;"></textarea>
+              </div>
 				<input type="submit" class="submit cardcol" value="submit">
             </div>
         </form>
