@@ -45,3 +45,5 @@ If this fails, ask Nelson for access. Push to heroku with:
 > git push heroku master
 
 (work on a separate branch and push when you're confident in your changes.)
+
+### Note: If you pulled this earlier, make sure to run `npm update` (we ported to express 3)
