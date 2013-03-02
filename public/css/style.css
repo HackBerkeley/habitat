@@ -476,3 +476,14 @@ a {
   background-color: rgba(0, 0, 0, 0.7);
   width: 100%;
 }
+
+/* 404 page */
+#four-oh-four {
+  width : 50%;
+  height : 100%;
+  margin : 0 auto;
+}
+
+#four-oh-four a {
+  color : #222;
+}

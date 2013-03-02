@@ -1,6 +1,9 @@
 <!DOCTYPE HTML>
 <html lang="en"> 
 	<head>
+  <% 
+    var title = typeof(title) === "undefined" ? "Habitat" : title;
+  %>
 		<title><%= title %></title>
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Anaheim" type="text/css" />
 		<link rel="stylesheet" href="/css/reset.css" type="text/css">
@@ -18,7 +21,7 @@
 					<div class="nav link" name="submit">submit</div>
 				</div>
 				<div style="right: 0px; float:right;">
-					<% if (user) { %>
+					<% if (typeof(user) !== "undefined") { %>
 						<div class="dumbnav">Welcome, </div>
 						<a href=<%= "/users/"+user.github.username %>><div class="nav" id="profile"><%= (user.github.name || user.github.username)+"!" %></div></a>
 						<img class="nav link" name="logout" style="height: 18px; padding: 7px;" src="https://s3.amazonaws.com/hackerfair/logout_icon.png" />
