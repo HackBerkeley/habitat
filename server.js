@@ -105,8 +105,8 @@ app.configure(function() {
   app.use(express.session({secret: 'autobahn'}));
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(app.router);
   app.use('/', express.static(__dirname + '/public'));
+  app.use(app.router);
   app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
 });
 
@@ -298,6 +298,10 @@ app.get('/projects/:id', function(req, res) {
 	Hack.findOne({
 		"hackid": req.params.id,
 	}, function(err, doc) {
+    if (doc === null) {
+      res.redirect('/404');
+      return;
+    }
 		var team = {};
 
 		for (var i=0; i<doc.team.length; i++) {
@@ -476,6 +480,14 @@ app.post('/projects/:id/comment', function(req,res) {
   }, { $push: { comments: newComment } },
   function(err, doc, raw) {
     res.redirect('/projects/'+req.params.id);
+  });
+});
+
+// 404!!!!111!
+app.get('*', function(req, res) {
+  res.status(404);
+  res.render('404', {
+    title : ':( 404'
   });
 });
 /* END REQUEST HANDLERS */
