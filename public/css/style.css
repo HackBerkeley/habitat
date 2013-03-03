@@ -478,9 +478,11 @@ a {
 
 /* 404 page */
 #four-oh-four {
-  width : 50%;
+  width : 100%;
   height : 100%;
-  margin : 0 auto;
+  margin-bottom:  0;
+  background:url(img/grass.jpg) repeat-x;
+
 }
 
 #four-oh-four a {
