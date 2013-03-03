@@ -28,6 +28,7 @@ body {
   font-size: 18px;
   line-height: 25px;
 	font-family: Anaheim;
+	height: 100%; 
 }
 
 h1 {
@@ -480,8 +481,8 @@ a {
 #four-oh-four {
   width : 100%;
   height : 100%;
-  margin-bottom:  0;
-  background:url(img/grass.jpg) repeat-x;
+  background-position:bottom;
+  background:url(/img/grass.jpg) repeat-x;
 
 }
 
