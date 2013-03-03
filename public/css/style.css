@@ -481,8 +481,7 @@ a {
 #four-oh-four {
   width : 100%;
   height : 100%;
-  background-position:bottom;
-  background:url(/img/grass.jpg) repeat-x;
+  background:url(/img/grass.jpg) repeat-x bottom;
 }
 
 #four-oh-four a {
