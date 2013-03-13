@@ -151,43 +151,58 @@ passport.use(
 
 app.get('/login', function(req, res, next) {
 	//check if we have a url parameter named event
+	req.session.redirect_loc = req.query.loc;
+	req.session.fail_loc = '/';
 	if (req.query.event) {
 		Event.findOne({"abbrev": req.query.event}, function(err, doc) {
 			if (doc) {
 				req.session.eventid = doc._id;
+				req.session.redirect_loc = doc.successUrl;
+				req.session.fail_loc = doc.failUrl;
 			}
 			else {
 				console.log(err);
-			}
+			}	
 			
-			req.session.redirect_loc = req.query.loc;
 			passport.authenticate('github', function(err, user, info) {
 				if (err) { 
-					return res.redirect("/"); 
+					return res.redirect(req.session.fail_loc); 
 				}
 				if (!user) { 
-					return res.redirect("/"); 
+					return res.redirect(req.session.fail_loc); 
 				}
 				
 				req.logIn(user, function(err) {
-					console.log(req.session);
 					return res.redirect(req.session.redirect_loc);
 				});
 			})(req, res, next);
 		});
-	};
+	}
+	else {
+		passport.authenticate('github', function(err, user, info) {
+			if (err) { 
+				return res.redirect(req.session.fail_loc); 
+			}
+			if (!user) { 
+				return res.redirect(req.session.fail_loc); 
+			}
+			
+			req.logIn(user, function(err) {
+				return res.redirect(req.session.redirect_loc);
+			});
+		})(req, res, next);
+	}
 });
 
 app.get('/auth/github/callback',
   passport.authenticate('github', {
-    failureRedirect: '/', //add failure page
+    failureRedirect: req.session.fail_loc | '/', //add failure page
   }),
   function(req, res) {
-	console.log(req.session);
 	if (req.session.eventid) {
 		console.log(req.session.eventid)
 		Event.findById(req.session.eventid, function(err, doc) {
-			console.log("*****************************\n", doc);
+			console.log(req.user, doc);
 			if (doc) {
 				doc.attendees.push(req.user._id);
 			}
