@@ -108,7 +108,7 @@ app.configure(function() {
 // instantiate Mongoose models
 var User = mongoose.model('User', models.UserSchema),
 	Hack = mongoose.model('Hack', models.HackSchema),
-  Event = mongoose.model('Event', models.EventSchema);
+	Event = mongoose.model('Event', models.EventSchema);
 
 /* START AUTHENTICATION FUNCTIONS */
 passport.serializeUser(function(user, done) {
@@ -144,7 +144,20 @@ passport.use(
   }
 ));
 
-app.get('/login', passport.authenticate('github'));
+app.get('/login', function(req, res, next) {
+	if (req.query.event) {
+		Event.findOne({"name": req.query.event}, function(err, doc) {
+			if (doc) {
+				req.session.event = doc._id;
+			}
+			else {
+				console.log(err);
+			}
+		});
+	};
+	req.session.event = req.query.event;
+	next();
+}, passport.authenticate('github'));
 
 app.get('/auth/github/callback',
   passport.authenticate('github', {
@@ -152,6 +165,9 @@ app.get('/auth/github/callback',
   }),
   function(req, res) {
     res.redirect('/users/me');
+	Event.findById(req.session.event, function(err, doc) {
+		doc.attendees.push(req.user._id);
+	});
   }
 );
 /* END AUTHENTICATION FUNCTIONS */
