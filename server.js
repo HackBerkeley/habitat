@@ -205,6 +205,7 @@ app.get('/auth/github/callback',
 			console.log(req.user, doc);
 			if (doc) {
 				doc.attendees.push(req.user._id);
+				doc.save();
 			}
 			else {
 				console.log(err);
