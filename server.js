@@ -202,7 +202,7 @@ app.get('/auth/github/callback',
 	if (req.session.eventid) {
 		console.log(req.session.eventid)
 		Event.update({"_id": req.session.eventid}, 
-					{ $addToSet: { "attendees": req.user._id},
+					{ $addToSet: { "attendees": req.user._id}},
 					function(err, doc) {
 			if (doc) {
 				doc.attendees.push(req.user._id);
