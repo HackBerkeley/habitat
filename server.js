@@ -150,9 +150,21 @@ passport.use(
 ));
 
 app.get('/login', function(req, res, next) {
+	//check if we have a url parameter named event
+	console.log("*****************************\n", req.query.event)
+	if (req.query.event) {
+		Event.findOne({"abbrev": req.query.event}, function(err, doc) {
+			console.log("*****************************\n", doc);
+			if (doc) {
+				req.session.eventid = doc._id;
+			}
+			else {
+				console.log(err);
+			}
+		});
+	};
 	req.session.redirect_loc = req.query.loc;
 	passport.authenticate('github', function(err, user, info) {
-		console.log("\n\n\n\n&&&&&&&&&&&&&&&&&&&\n", err, user, info);
 		if (err) { 
 			return res.redirect("/"); 
 		}
@@ -172,6 +184,18 @@ app.get('/auth/github/callback',
     failureRedirect: '/', //add failure page
   }),
   function(req, res) {
+	if (req.session.eventid) {
+		console.log(eventid)
+		Event.findById(req.session.eventid, function(err, doc) {
+			console.log("*****************************\n", doc);
+			if (doc) {
+				doc.attendees.push(req.user._id);
+			}
+			else {
+				console.log(err);
+			}
+		});
+	};
     res.redirect(req.session.redirect_loc || '/users/me');
   }
 );
