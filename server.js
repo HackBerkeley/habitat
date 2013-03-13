@@ -144,7 +144,7 @@ passport.use(
       doc.github.name = profile._json.name;
       doc.github.email = profile.emails[0]["value"];
       doc.save(errorCallback);
-      done(err, doc);
+      done(err, doc, profile);
     });
   }
 ));
@@ -158,10 +158,11 @@ app.get('/login', function(req, res, next) {
 		if (!user) { 
 			return res.redirect("/"); 
 		}
-
+		
 		req.logIn(user, function(err) {
-			return res.redirect(req.session.redirect_loc);;
+			return res.redirect(req.session.redirect_loc);
 		});
+		next(req, res);
 	})(req, res, next);
 }, function(req, res) {console.log("!@#$#@!%!@#$!@#^!#@$^!#@$!@^#$!%\n\n")});
 
