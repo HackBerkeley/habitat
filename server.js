@@ -202,7 +202,7 @@ app.get('/auth/github/callback',
 	if (req.session.eventid) {
 		console.log(req.session.eventid)
 		Event.findById(req.session.eventid, function(err, doc) {
-			console.log(req.user, doc);
+			console.log(req.session);
 			if (doc) {
 				doc.attendees.push(req.user._id);
 				doc.save();
