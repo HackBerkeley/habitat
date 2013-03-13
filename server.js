@@ -203,15 +203,7 @@ app.get('/auth/github/callback',
 		console.log(req.session.eventid)
 		Event.update({"_id": req.session.eventid}, 
 					{ $addToSet: { "attendees": req.user._id}},
-					function(err, doc) {
-			if (doc) {
-				doc.attendees.push(req.user._id);
-				doc.save();
-			}
-			else {
-				console.log(err);
-			}
-		});
+					errorCallback);
 	}
     res.redirect(req.session.redirect_loc || '/users/me');
   }
