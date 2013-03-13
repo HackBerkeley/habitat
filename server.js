@@ -151,10 +151,8 @@ passport.use(
 
 app.get('/login', function(req, res, next) {
 	//check if we have a url parameter named event
-	console.log("*****************************\n", req.query.event)
 	if (req.query.event) {
 		Event.findOne({"abbrev": req.query.event}, function(err, doc) {
-			console.log("*****************************\n", doc);
 			if (doc) {
 				req.session.eventid = doc._id;
 			}
@@ -185,7 +183,7 @@ app.get('/auth/github/callback',
   }),
   function(req, res) {
 	if (req.session.eventid) {
-		console.log(eventid)
+		console.log(req.session.eventid)
 		Event.findById(req.session.eventid, function(err, doc) {
 			console.log("*****************************\n", doc);
 			if (doc) {
