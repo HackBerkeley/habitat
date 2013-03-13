@@ -151,14 +151,15 @@ passport.use(
 
 app.get('/login', function(req, res, next) {
 	req.session.redirect_loc = req.query.loc;
-	console.log("*****************************\n");
 	passport.authenticate('github', function(err, user, info) {
+		console.log("*****************************\n");
 		if (err) { 
 			return res.redirect("/"); 
 		}
 		if (!user) { 
 			return res.redirect("/"); 
 		}
+		console.log("-----------------------------\n");
 		//check if we have a url parameter named event
 		console.log("*****************************\n", req.query.event)
 		if (req.query.event) {
