@@ -196,7 +196,7 @@ app.get('/login', function(req, res, next) {
 
 app.get('/auth/github/callback',
   passport.authenticate('github', {
-    failureRedirect: req.session.fail_loc | '/', //add failure page
+    failureRedirect: '/', //add failure page
   }),
   function(req, res) {
 	if (req.session.eventid) {
