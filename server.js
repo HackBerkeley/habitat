@@ -155,6 +155,7 @@ app.get('/login', function(req, res, next) {
 		Event.findOne({"abbrev": req.query.event}, function(err, doc) {
 			if (doc) {
 				req.session.eventid = doc._id;
+				console.log(req.session);
 			}
 			else {
 				console.log(err);
