@@ -160,7 +160,7 @@ app.get('/login', function(req, res, next) {
 		}
 		//check if we have a url parameter named event
 		if (req.query.event) {
-			Event.findOne({"name": req.query.event}, function(err, doc) {
+			Event.findOne({"abbrev": req.query.event}, function(err, doc) {
 				if (doc) {
 					doc.attendees.push(user._id);
 				}
