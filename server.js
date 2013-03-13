@@ -159,7 +159,7 @@ app.get('/login', function(req, res, next) {
 				req.session.eventid = doc._id;
 				req.session.redirect_loc = doc.successUrl;
 				req.session.fail_loc = doc.failUrl;
-				console.log(doc, req.session);
+				console.log(doc.successUrl, doc.failUrl, req.session);
 			}
 			else {
 				console.log(err);
