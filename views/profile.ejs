@@ -1,3 +1,4 @@
+<% layout('layout') -%>
 <div id="content">
   <!-- Blank column -->
   <div class="grid column1" id="links">
@@ -17,20 +18,25 @@
   <div class="grid column" id="links">
 
     <div class="square twocolumn2by1rect">
-      <span id="nameSaveButton" style="z-index: 1000; display: none; font-size: 20px; line-height: 22px; font-weight: bold; text-transform: lowercase; margin-top: 90%; margin-left: 0px; color: white; background-color: rgba(0,148,0,0.75); opacity: 0.9; position: absolute; text-align: center; width: 100%;">Save</span>
+      <span id="nameSaveButton" style="z-index: 1000; display: none; font-size: 20px; line-height: 22px; font-weight: bold; text-transform: lowercase; margin-top: 90%; margin-left: 0px; color: white; background-color: rgba(0,148,0,0.75); opacity: 0.9; position: absolute; text-align: center; width: 100%;">
+        Save
+      </span>
       <div class="squaretext" style="font-size: 30px;"><div class="squaretitle" id="nameField" contentEditable="<%= myself %>">
-      	<% if (viewing.info.name) { %> 
+      	<%if (viewing.info.name) { %> 
           <%= viewing.info.name %>
         <% } else { %>
           [Mr. No Name]
         <% } %>
       </div></div>
+      <%if (myself) { %>
+        <img id="nameEditIcon" src="/img/pencil.png"></img>
+      <% } %>
     </div>
 
     <div class="square twocol">
-        <% if (viewing.github.email) { %>
+        <%if (viewing.github.email) { %>
           <div class="squaretext">
-            <%= viewing.github.email%>
+            <%= viewing.github.email %>
           </div>
         <% } else { %>
          <% var a = Math.floor(Math.random() * 150 + 150); %>
@@ -55,6 +61,9 @@
    
   <div class="grid column" id="links">
     <div class="square twocolumntwosquare">
+      <%if (myself) { %>
+        <img id="blurbEditIcon" src="/img/pencil.png"></img>
+      <% } %>
       <span id="saveButton" style="z-index: 1000; display: none; font-size: 20px; line-height: 22px; font-weight: bold; text-transform: lowercase; margin-top: 90%; margin-left: 0px; color: white; background-color: rgba(0,148,0,0.75); opacity: 0.9; position: absolute; text-align: center; width: 100%;">Save</span>
       <div class="squaretext"><div class="squarebio" id="blurb" contentEditable="<%= myself %>">
         <%= viewing.info.blurb || quote %>

@@ -2,6 +2,7 @@
 var express = require('express'),
   connect = require('connect'),
   ejs = require('ejs'),
+  engine = require('ejs-locals'),
   http = require('http'),
   mongoose = require('mongoose'),
   passport = require('passport'),
@@ -41,8 +42,8 @@ else if (process.argv[2] == "local") {
 console.log("h@bitat running at", SITE_URL, "\nconnected to db", MONGO_URI);
 
 // instantiate the app and connect to the database
-var app = module.exports = express.createServer(),
-  db = mongoose.connect(MONGO_URI);
+var app = express(),
+    db = mongoose.connect(MONGO_URI);
 
 /* START UTILITY FUNCTIONS */
 function errorCallback(err) {
@@ -53,13 +54,16 @@ function errorCallback(err) {
 
 function ensureAuthenticated(failureUrl) {
   return function(req, res, next) {
-    if (req.isAuthenticated())
+    req.session.redirect_loc = req.url;
+    if (req.isAuthenticated()) {
       next();
-    else
+    } else {
       res.redirect(failureUrl);
+    }
   }
 }
 
+// TODO: check if this actually makes sense on all things. sometimes they aren't a url at allm, and don't need an http in front of them
 function forceAbsolute(url) {
   if (url && url.indexOf('://') < 0) {
     url = "http://" + url;
@@ -89,6 +93,7 @@ function shuffle(arr) {
   return arr;
 }
 /* END UTILITY FUNCTIONS */
+app.engine('ejs', engine);
 
 // configure app and modules
 app.configure(function() {
@@ -145,29 +150,37 @@ passport.use(
 ));
 
 app.get('/login', function(req, res, next) {
-	if (req.query.event) {
-		Event.findOne({"name": req.query.event}, function(err, doc) {
-			if (doc) {
-				req.session.event = doc._id;
-			}
-			else {
-				console.log(err);
-			}
+	req.session.redirect_loc = req.query.loc;
+	passport.authenticate('github', function(err, user, info) {
+		if (err) { 
+			return res.redirect("/"); 
+		}
+		if (!user) { 
+			return res.redirect("/"); 
+		}
+		//check if we have a url parameter named event
+		if (req.query.event) {
+			Event.findOne({"name": req.query.event}, function(err, doc) {
+				if (doc) {
+					doc.attendees.push(user._id);
+				}
+				else {
+					console.log(err);
+				}
+			});
+		};
+		req.logIn(user, function(err) {
+			return res.redirect(req.session.redirect_loc);;
 		});
-	};
-	req.session.event = req.query.event;
-	next();
-}, passport.authenticate('github'));
+		})(req, res, next);
+});
 
 app.get('/auth/github/callback',
   passport.authenticate('github', {
     failureRedirect: '/', //add failure page
   }),
   function(req, res) {
-    res.redirect('/users/me');
-	Event.findById(req.session.event, function(err, doc) {
-		doc.attendees.push(req.user._id);
-	});
+    res.redirect(req.session.redirect_loc || '/users/me');
   }
 );
 /* END AUTHENTICATION FUNCTIONS */
@@ -231,7 +244,6 @@ app.get('/users/:username', function(req, res) {
 
 // need to be able to edit profile page
 app.post('/users/:username', function(req, res) {
-  console.log("updating");
   if (req.params.username == "me") {
     var username = req.user.github.username;
   } else {
@@ -240,13 +252,11 @@ app.post('/users/:username', function(req, res) {
       res.redirect("/users/"+req.params.username);
     }
   }
-  console.log(username);
     User.findOne({
       "github.username": username
     }, function(err, user) {
-      console.log("found the user: "+user);
       if (err) {
-        console.log(err);
+        console.log("Ran into error: "+err);
         res.redirect("/users/me");
       } else {
         user.info.name = req.body.user.name || user.info.name;
@@ -255,8 +265,6 @@ app.post('/users/:username', function(req, res) {
         user.save(function(e) {
           if (e) {
             console.log("Ran into error: "+e);
-          } else {
-            console.log("Saved.");
           }
         });
       }
@@ -264,6 +272,7 @@ app.post('/users/:username', function(req, res) {
 });
 
 function project_filter(req, res, page, searchstr) {
+  page = page - 1;
   /* Return many objects that correspond to the given page and query. */
   var query = Hack.find({});
   if (searchstr.length > 0) {
@@ -278,12 +287,14 @@ function project_filter(req, res, page, searchstr) {
     query.or(constraints);
   }
 
-  //query.skip(page * 30);
-  //query.limit(30);
+  query.skip(page * 24);
+  query.limit(24);
 
   query.exec(function(err, docs) {
     res.render('hacks', {
       title: 'Hacks',
+      lastPage: docs.length < 24,
+      page: page+1,
       user: req.user,
       hacks: shuffle(docs),
     });
@@ -291,11 +302,11 @@ function project_filter(req, res, page, searchstr) {
 };
 
 app.get('/projects', function(req, res) {
-  project_filter(req, res, 0, "");
+  project_filter(req, res, 1, "");
 });
 
-app.get('/projects/filter/:page/:query', function(req, res) {
-  project_filter(req, res, req.params.page, req.params.query);
+app.get('/projects/filter', function(req, res) {
+  project_filter(req, res, req.query.page || 1, req.query.q || "");
 });
 
 app.get('/projects/:id', function(req, res) {
@@ -303,7 +314,7 @@ app.get('/projects/:id', function(req, res) {
 		"hackid": req.params.id,
 	}, function(err, doc) {
 		var team = {};
-		
+
 		for (var i=0; i<doc.team.length; i++) {
 			if(doc.team[i]) {
 				team[doc.team[i]] = {
@@ -312,7 +323,7 @@ app.get('/projects/:id', function(req, res) {
 				};
 			}
 		}
-		
+
 		User.where('github.username').in(doc.team).exec(function(err, docs) {
 			for (var i=0; i<docs.length; i++) {
 				team[docs[i].github.username] = {
@@ -320,7 +331,6 @@ app.get('/projects/:id', function(req, res) {
 					avatarUrl: docs[i].github.avatarUrl,
 				};
 			}
-      console.log("LINE"+JSON.stringify(doc));
 			res.render('hack', {
 				title: doc.title,
 				user: req.user,
@@ -355,25 +365,36 @@ app.get('/projects/:id/edit', ensureAuthenticated('/login'), function(req, res) 
 });
 
 app.post('/projects/:id', ensureAuthenticated('/login'), function(req, res) {
-  console.log(req.body);
   Hack.findOne({
     "hackid": req.params.id,
   }, function(err, doc) {
     if (doc.owners.indexOf(req.user._id) < 0) {
       res.redirect('/projects/'+req.params.id);
     } else {
-      console.log("Goodbye"+JSON.stringify(req.body));
-
       doc.title = req.body.title;
       doc.source = forceAbsolute(req.body.source);
-      doc.demo = forceAbsolute(req.body.demo);
-      doc.video = forceAbsolute(req.body.video);
-      doc.picture = forceAbsolute(req.body.picture);
-      doc.blurb = req.body.blurb;
-      doc.tags = req.body.tags.toLowerCase().split(',').map(stripSpaces);
-      doc.comments = req.body.comments;
-      doc.save(function(err, doc) {
-        res.redirect('/projects/'+doc.hackid);
+      doc.team = req.body.team.split(/[,\/ ]+/);
+      User.where('github.username').in(req.body.owners.split(/[,\/ ]+/)).exec(function(e, users) {
+        if (e || !users) {
+          console.log("Error occured: "+e);
+        } else {
+          doc.owners = users.map(function (user) {
+            return mongoose.Types.ObjectId(""+user._id);
+          });
+          doc.demo = forceAbsolute(req.body.demo);
+          doc.video = forceAbsolute(req.body.video);
+          doc.picture = forceAbsolute(req.body.picture);
+          doc.blurb = req.body.blurb;
+          doc.tags = req.body.tags.toLowerCase().split(',').map(stripSpaces);
+          doc.comments = req.body.comments;
+          doc.save(function(er, d) {
+            if (er) {
+              console.log(er);
+            } else {
+              res.redirect('/projects/'+doc.hackid);
+            }
+          });
+        }
       });
     }
   });
@@ -462,18 +483,13 @@ app.get('/', function(req, res) {
 });
 
 app.post('/projects/:id/comment', function(req,res) {
-  console.log("HELLO");
 
   var newComment = {poster: req.body.postername, comment: req.body.postercomment};
 
-  console.log("WTF"+JSON.stringify(newComment));
   Hack.update({
     "hackid": req.params.id,
-  }, { $push: { comments: newComment } }, 
+  }, { $push: { comments: newComment } },
   function(err, doc, raw) {
-    console.log("NOOO"+JSON.stringify(doc));
-    console.log("RAW: " + raw);
-    console.log("ERR: " + err);
     res.redirect('/projects/'+req.params.id);
   });
 });
