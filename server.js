@@ -144,7 +144,7 @@ passport.use(
       doc.github.name = profile._json.name;
       doc.github.email = profile.emails[0]["value"];
       doc.save(errorCallback);
-      done(err, doc, profile);
+      done(err, doc);
     });
   }
 ));
@@ -173,15 +173,15 @@ app.get('/login', function(req, res, next) {
 		req.logIn(user, function(err) {
 			return res.redirect(req.session.redirect_loc);
 		});
-		next(req, res);
 	})(req, res, next);
-}, function(req, res) {console.log("!@#$#@!%!@#$!@#^!#@$^!#@$!@^#$!%\n\n")});
+});
 
 app.get('/auth/github/callback',
   passport.authenticate('github', {
     failureRedirect: '/', //add failure page
   }),
   function(req, res) {
+	console.log(req.session);
 	if (req.session.eventid) {
 		console.log(req.session.eventid)
 		Event.findById(req.session.eventid, function(err, doc) {
@@ -193,7 +193,7 @@ app.get('/auth/github/callback',
 				console.log(err);
 			}
 		});
-	};
+	}
     res.redirect(req.session.redirect_loc || '/users/me');
   }
 );
