@@ -159,8 +159,10 @@ app.get('/login', function(req, res, next) {
 			return res.redirect("/"); 
 		}
 		//check if we have a url parameter named event
+		console.log("*****************************\n", req.query.event)
 		if (req.query.event) {
 			Event.findOne({"abbrev": req.query.event}, function(err, doc) {
+				console.log("*****************************\n", doc);
 				if (doc) {
 					doc.attendees.push(user._id);
 				}
