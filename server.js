@@ -152,6 +152,7 @@ passport.use(
 app.get('/login', function(req, res, next) {
 	req.session.redirect_loc = req.query.loc;
 	passport.authenticate('github', function(err, user, info) {
+		console.log("\n\n\n\n&&&&&&&&&&&&&&&&&&&\n", err, user, info);
 		if (err) { 
 			return res.redirect("/"); 
 		}
