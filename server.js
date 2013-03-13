@@ -152,32 +152,18 @@ passport.use(
 app.get('/login', function(req, res, next) {
 	req.session.redirect_loc = req.query.loc;
 	passport.authenticate('github', function(err, user, info) {
-		console.log("*****************************\n");
 		if (err) { 
 			return res.redirect("/"); 
 		}
 		if (!user) { 
 			return res.redirect("/"); 
 		}
-		console.log("-----------------------------\n");
-		//check if we have a url parameter named event
-		console.log("*****************************\n", req.query.event)
-		if (req.query.event) {
-			Event.findOne({"abbrev": req.query.event}, function(err, doc) {
-				console.log("*****************************\n", doc);
-				if (doc) {
-					doc.attendees.push(user._id);
-				}
-				else {
-					console.log(err);
-				}
-			});
-		};
+
 		req.logIn(user, function(err) {
 			return res.redirect(req.session.redirect_loc);;
 		});
-		})(req, res, next);
-});
+	})(req, res, next);
+}, function(req, res) {console.log("!@#$#@!%!@#$!@#^!#@$^!#@$!@^#$!%\n\n")});
 
 app.get('/auth/github/callback',
   passport.authenticate('github', {
