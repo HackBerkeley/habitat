@@ -159,6 +159,7 @@ app.get('/login', function(req, res, next) {
 				req.session.eventid = doc._id;
 				req.session.redirect_loc = doc.successUrl;
 				req.session.fail_loc = doc.failUrl;
+				console.log(req.session);
 			}
 			else {
 				console.log(err);
@@ -199,6 +200,7 @@ app.get('/auth/github/callback',
     failureRedirect: '/', //add failure page
   }),
   function(req, res) {
+	console.log(req.session);
 	if (req.session.eventid) {
 		console.log(req.session.eventid)
 		Event.update({"_id": req.session.eventid}, 
