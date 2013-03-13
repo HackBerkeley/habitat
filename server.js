@@ -155,26 +155,27 @@ app.get('/login', function(req, res, next) {
 		Event.findOne({"abbrev": req.query.event}, function(err, doc) {
 			if (doc) {
 				req.session.eventid = doc._id;
-				console.log(req.session);
 			}
 			else {
 				console.log(err);
 			}
+			
+			req.session.redirect_loc = req.query.loc;
+			passport.authenticate('github', function(err, user, info) {
+				if (err) { 
+					return res.redirect("/"); 
+				}
+				if (!user) { 
+					return res.redirect("/"); 
+				}
+				
+				req.logIn(user, function(err) {
+					console.log(req.session);
+					return res.redirect(req.session.redirect_loc);
+				});
+			})(req, res, next);
 		});
 	};
-	req.session.redirect_loc = req.query.loc;
-	passport.authenticate('github', function(err, user, info) {
-		if (err) { 
-			return res.redirect("/"); 
-		}
-		if (!user) { 
-			return res.redirect("/"); 
-		}
-		
-		req.logIn(user, function(err) {
-			return res.redirect(req.session.redirect_loc);
-		});
-	})(req, res, next);
 });
 
 app.get('/auth/github/callback',
