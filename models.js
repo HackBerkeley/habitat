@@ -14,7 +14,9 @@ exports.EventSchema = new Schema({
   end: Date,
   name: String,
   abbrev: String,
-  attendees: [Schema.ObjectId]
+  attendees: [Schema.ObjectId],
+  successUrl: String,
+  failUrl: String,
 });
 
 exports.HackSchema = new Schema({
