@@ -113,7 +113,7 @@ app.configure(function() {
 // instantiate Mongoose models
 var User = mongoose.model('User', models.UserSchema),
 	Hack = mongoose.model('Hack', models.HackSchema),
-  Event = mongoose.model('Event', models.EventSchema);
+	Event = mongoose.model('Event', models.EventSchema);
 
 /* START AUTHENTICATION FUNCTIONS */
 passport.serializeUser(function(user, done) {
@@ -150,14 +150,48 @@ passport.use(
 ));
 
 app.get('/login', function(req, res, next) {
-  req.session.redirect_loc = req.query.loc;
-  passport.authenticate('github', function(err, user, info) {
-    if (err) { return res.redirect("/"); }
-    if (!user) { return res.redirect("/"); }
-    req.logIn(user, function(err) {
-      return res.redirect(req.session.redirect_loc);;
-    });
-  })(req, res, next);
+	//check if we have a url parameter named event
+	req.session.redirect_loc = req.query.loc;
+	req.session.fail_loc = '/';
+	if (req.query.event) {
+		Event.findOne({"abbrev": req.query.event}, function(err, doc) {
+			if (doc) {
+				req.session.eventid = doc._id;
+				req.session.redirect_loc = doc.successUrl;
+				req.session.fail_loc = doc.failUrl;
+			}
+			else {
+				console.log(err);
+			}	
+			
+			passport.authenticate('github', function(err, user, info) {
+				if (err) { 
+					return res.redirect(req.session.fail_loc); 
+				}
+				if (!user) { 
+					return res.redirect(req.session.fail_loc); 
+				}
+				
+				req.logIn(user, function(err) {
+					return res.redirect(req.session.redirect_loc);
+				});
+			})(req, res, next);
+		});
+	}
+	else {
+		passport.authenticate('github', function(err, user, info) {
+			if (err) { 
+				return res.redirect(req.session.fail_loc); 
+			}
+			if (!user) { 
+				return res.redirect(req.session.fail_loc); 
+			}
+			
+			req.logIn(user, function(err) {
+				return res.redirect(req.session.redirect_loc);
+			});
+		})(req, res, next);
+	}
 });
 
 app.get('/auth/github/callback',
@@ -165,6 +199,13 @@ app.get('/auth/github/callback',
     failureRedirect: '/', //add failure page
   }),
   function(req, res) {
+	console.log(req.session);
+	if (req.session.eventid) {
+		console.log(req.session.eventid)
+		Event.update({"_id": req.session.eventid}, 
+					{ $addToSet: { "attendees": req.user._id}},
+					errorCallback);
+	}
     res.redirect(req.session.redirect_loc || '/users/me');
   }
 );

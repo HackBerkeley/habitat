@@ -12,7 +12,11 @@ function toLower(str) {
 exports.EventSchema = new Schema({
   start: Date,
   end: Date,
-  name: String
+  name: String,
+  abbrev: String,
+  attendees: [Schema.ObjectId],
+  successUrl: String,
+  failUrl: String,
 });
 
 exports.HackSchema = new Schema({
@@ -27,7 +31,7 @@ exports.HackSchema = new Schema({
 	tags: [String],
 	hackid: String,
 	comments: [Schema.Types.Mixed],
-  event: String
+	event: String
 });
 
 exports.UserSchema = new Schema({
