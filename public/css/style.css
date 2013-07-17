@@ -18,7 +18,7 @@
 }
 
 html {
-	height: 102%;
+	height: 100%;
 }
 
 body {
@@ -28,6 +28,7 @@ body {
 	font-size: 18px;
 	line-height: 25px;
 	font-family: Anaheim;
+	height: 100%;
 }
 
 h1 {
