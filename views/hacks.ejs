@@ -20,7 +20,7 @@
   <div class="grid column6" id="links">
     <% var squarecount = 0; %>
     <% for (var i=0; i<hacks.length; i++) { squarecount++; %>
-    <div class="square link sixcol" name=<%= "projects/" + hacks[i].hackid %>>
+    <div class="square link sixcol" name=<%= hacks[i].hackid %>>
       <span><%= hacks[i].title %></span>
       <% if (hacks[i].picture) { %>
         <object data="<%= hacks[i].picture %>" style="width:100%">
